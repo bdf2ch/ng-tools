@@ -1,6 +1,3 @@
-export type JsonRpcRequestParameterInterface = [string, any];
-
-
 export interface JsonRpcRequestInterface {
     method: string;
     params?: any[]|{};

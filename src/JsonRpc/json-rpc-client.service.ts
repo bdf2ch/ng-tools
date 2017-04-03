@@ -20,20 +20,43 @@ export class JsonRpcClientService {
 
 
     /**
-     * Call remote method on server
+     * Send request to remote server
      * @param request {JsonRpcRequestIntarface} - Request options
      * @returns {Observable<T>}
      */
-    call (request: JsonRpcRequestInterface) : Observable<JsonRpcResponse> {
+    request(request: JsonRpcRequestInterface): Observable<JsonRpcResponse> {
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });
-        let parameters = request.params;
-        return this.$http.post('dsd', parameters, options)
+        return this.$http.post('dsd', request, options)
             .map((response: Response) => {
                 let body = response.json();
                 this.response = new JsonRpcResponse(body);
                 console.info(this.response);
                 return this.response;
+            })
+            .take(1);
+    };
+
+
+    /**
+     * Send batch of requests to server
+     * @param requests {JsonRpcRequest[]} - array of requests
+     * @returns {Observable<T>}
+     */
+    batch(requests: JsonRpcRequestInterface[]): Observable<JsonRpcResponse[]> {
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = RequestOptions({ headers: headers });
+
+        return this.$http.post('ddd', requests, options)
+            .map((response: Response) => {
+                let body = response.json();
+                let length = body.length;
+                let result = [];
+                for (let i = 0; i < length; i++) {
+                    let jsonRpcResponse = new JsonRpcResponse(body[i]);
+                    result.push(jsonRpcResponse);
+                }
+                return result;
             })
             .take(1);
     };
