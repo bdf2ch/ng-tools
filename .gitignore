@@ -46,4 +46,4 @@ fabric.properties
 
 .idea/
 package.json
-npm-debug.log
+/npm-debug.log
